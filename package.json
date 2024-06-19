@@ -1,10 +1,10 @@
 {
     "name": "myscl-server",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "main": "src/cli.js",
     "author": "nodepython48",
     "license": "MIT",
-    "description": "A NoSQL server with caching capabilities.",
+    "description": "A Lightweight NoSQL DB server with caching capabilities.",
     "bin": {
         "myscl": "./src/cli.js"
     },
