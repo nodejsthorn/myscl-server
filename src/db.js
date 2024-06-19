@@ -1,8 +1,12 @@
 const fs = require("fs")
 
 class Database {
+    constructor (config) {
+        this.config = config
+    }
+
     createCollection(dbname, name) {
-        let filepath = __dirname + "/../../db/" + dbname
+        let filepath = __dirname + "/../db/" + dbname
 
         if (fs.existsSync(filepath)) {
             if (fs.existsSync(filepath + "/" + name)) {
@@ -17,7 +21,7 @@ class Database {
     }
 
     createDB(name) {
-        let filepath = __dirname + "/../../db/" + name
+        let filepath = __dirname + "/../db/" + name
 
         if (fs.existsSync(filepath)) {
             return { type: "error", message: "Database '" + name + "' already exists/doesn't exist." }
@@ -28,7 +32,7 @@ class Database {
     }
 
     insert(dbname, cname, value) {
-        let filepath = __dirname + "/../../db/" + dbname
+        let filepath = __dirname + "/../db/" + dbname
 
         if (fs.existsSync(filepath)) {
             if (!fs.existsSync(filepath + "/" + cname)) {

@@ -3,18 +3,19 @@ const bodyParser = require("body-parser")
 const cors = require("cors")
 const { Cache } = require("./cache.js")
 const { Database } = require("./db.js")
-const config = require("../../db/config.json")
+const config = require("../db/config.json")
 const app = express()
 
 app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
-const db = new Database()
+const db = new Database(config)
 const cache = new Cache(config)
 
-const BLUE = "\u001b[34m"
-const RESET = "\u001b[0m"
+function message(response) {
+    return "\u001b[34m" + "myscl: " + "\u001b[0m" + response
+}
 
 app.post("/db", (req, res) => {
     if (req.body.type === "writeCache") {
@@ -33,16 +34,16 @@ app.post("/db", (req, res) => {
         res.json(data)
 
         if (typeof data != "object") {
-            console.log(BLUE + "myscl: " + RESET + "Created database '" + req.body.name + "'.")
+            console.log(message("Created database '" + req.body.name + "'."))
         }
     } else if (req.body.type === "createCollection") {
         const data = db.createCollection(req.body.dbname, req.body.name)
         res.json(data)
 
         if (typeof data != "object") {
-            console.log(BLUE + "myscl: " + RESET + "Created collection '" + req.body.name + "' in database '" + req.body.dbname + "'.")
+            console.log(message("Created collection '" + req.body.name + "' in database '" + req.body.dbname + "'."))
         }
-    } else if (req.body.type === "insert") {
+    } else if (req.body.type === "insertOne") {
         res.json(db.insert(req.body.dbname, req.body.cname, req.body.value))
     } else {
         res.json({ type: "error", message: "Unknown request type." })
@@ -51,4 +52,4 @@ app.post("/db", (req, res) => {
 
 const port = config.port || 8000
 
-app.listen(port, () => console.log(BLUE + "myscl: " + RESET + "Listening at port " + port + "."))
+app.listen(port, () => console.log(message("Listening at port " + port + ".")))

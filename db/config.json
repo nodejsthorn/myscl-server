@@ -3,6 +3,6 @@
     "host": "127.0.0.1",
     "cacheOptions": {
         "cache": true,
-        "maxCachedAllowed": 3
+        "maxCachedAllowed": 10
     }
 }
