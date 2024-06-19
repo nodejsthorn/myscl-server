@@ -31,7 +31,7 @@ class Database {
         }
     }
 
-    insert(dbname, cname, value) {
+    insertOne(dbname, cname, value) {
         let filepath = __dirname + "/../db/" + dbname
 
         if (fs.existsSync(filepath)) {
@@ -55,6 +55,34 @@ class Database {
         } else {
             return { type: "error", message: "Database '" + dbname + "' doesn't exist." }
         }
+    }
+
+    insertMany(dbname, cname, value) {
+        let filepath = __dirname + "/../db/" + dbname
+
+        if (fs.existsSync(filepath)) {
+            if (!fs.existsSync(filepath + "/" + cname)) {
+                return { type: "error", message: "Collection '" + cname + "' doesn't exist." }
+            } else {
+                filepath = filepath + "/" + cname + "/" + cname + ".json"
+
+                if (fs.existsSync(filepath)) {
+                    let file = JSON.parse(fs.readFileSync(filepath, { encoding: "utf8" }))
+
+                    value.forEach((v) => {
+                        file.push(v)
+                    })
+
+                    fs.writeFileSync(filepath, JSON.stringify(file), { encoding: "utf8" })
+                } else {
+                    fs.writeFileSync(filepath, JSON.stringify(value), { encoding: "utf8" })
+                }
+
+                return undefined
+            }
+        } else {
+            return { type: "error", message: "Database '" + dbname + "' doesn't exist." }
+        } 
     }
 }
 

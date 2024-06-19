@@ -1,4 +1,4 @@
-#! /usr/bin/env node
+#!/usr/bin/env node
 
 const figlet = require("figlet")
 const { createSpinner }  = require("nanospinner")
@@ -7,7 +7,7 @@ const fs = require("fs")
 const cliConfig = require("../db/cli.json")
 const package = require("../package.json")
 
-const sleep = ms => new Promise(r => setTimeout(r, ms));
+const sleep = ms => new Promise(r => setTimeout(r, ms))
 
 async function startingMessage() {
     console.clear()
@@ -69,7 +69,7 @@ if (cliConfig.usedBefore === false) {
             let table = []
 
             list.forEach((process) => {
-                table.push({ name: process.name, pid: process.pid, pm2: process.pm_id, cpu: process.monit.cpu, memory: process.monit.memory })
+                table.push({ name: process.name, pid: process.pid, app_id: process.pm_id, cpu: process.monit.cpu, memory: process.monit.memory })
             })
 
             console.table(table)
@@ -79,6 +79,27 @@ if (cliConfig.usedBefore === false) {
     } else if (arguments[0] === "start") {
         startDaemon()
         console.log("Successfully started DB daemon.")
+    } else if (arguments[0] === "kill" || arguments[0] === "stop") {
+        pm2.delete("0", (err) => {
+            if (err) throw err
+            console.log("Successfully killed DB daemon.")
+            pm2.disconnect()
+        })
+    } else if (arguments[0] === "restart") {
+        pm2.connect((err) => {
+            if (err) {
+                pm2.disconnect()
+                throw err
+            }
+
+            pm2.restart("0", (err) => {
+                if (err) throw err
+                
+                pm2.disconnect()
+            })
+        })
+
+        console.log("Successfully restarted DB daemon.")
     } else {
         console.log("Unknown Command.")
     }

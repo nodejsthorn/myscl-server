@@ -44,7 +44,13 @@ app.post("/db", (req, res) => {
             console.log(message("Created collection '" + req.body.name + "' in database '" + req.body.dbname + "'."))
         }
     } else if (req.body.type === "insertOne") {
-        res.json(db.insert(req.body.dbname, req.body.cname, req.body.value))
+        res.json(db.insertOne(req.body.dbname, req.body.cname, req.body.value))
+    } else if (req.body.type === "insertMany") {
+        if (Array.isArray(req.body.value)) {
+            res.json(db.insertMany(req.body.dbname, req.body.cname, req.body.value))
+        } else {
+            res.json({ type: "error", message: "Datatype of value isn't an array. (Expected an array as input)" })
+        }
     } else {
         res.json({ type: "error", message: "Unknown request type." })
     }
