@@ -53,6 +53,18 @@ app.post("/db", async (req, res) => {
         }
     } else if (req.body.type === "findOne") {
         res.json(db.findOne(req.body.dbname, req.body.cname, req.body.search))
+    } else if (req.body.type === "deleteDB") {
+        res.json(db.deleteDB(req.body.dbname))
+
+        if (typeof data != "object") {
+            console.log(message("Deleted database '" + req.body.dbname + "'."))
+        }
+    } else if (req.body.type === "deleteCollection") {
+        res.json(db.deleteCollection(req.body.dbname, req.body.cname))
+        
+        if (typeof data != "object") {
+            console.log(message("Deleted collection '" + req.body.cname + "' in database '" + req.body.dbname + "'."))
+        }
     } else {
         res.json({ type: "error", message: "Unknown request type." })
     }

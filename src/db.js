@@ -5,14 +5,14 @@ class Database {
         this.config = config
     }
 
-    createCollection(dbname, name) {
+    createCollection(dbname, cname) {
         let filepath = __dirname + "/../db/" + dbname
 
         if (fs.existsSync(filepath)) {
-            if (fs.existsSync(filepath + "/" + name)) {
-                return { type: "error", message: "Collection '" + name + "' already exists/doesn't exist." }
+            if (fs.existsSync(filepath + "/" + cname)) {
+                return { type: "error", message: "Collection '" + cname + "' already exists." }
             } else {
-                fs.mkdirSync(filepath + "/" + name)
+                fs.mkdirSync(filepath + "/" + cname)
                 return undefined
             }
         } else {
@@ -20,14 +20,41 @@ class Database {
         }
     }
 
-    createDB(name) {
-        let filepath = __dirname + "/../db/" + name
+    createDB(dbname) {
+        let filepath = __dirname + "/../db/" + dbname
 
         if (fs.existsSync(filepath)) {
-            return { type: "error", message: "Database '" + name + "' already exists/doesn't exist." }
+            return { type: "error", message: "Database '" + dbname + "' already exists." }
         } else {
             fs.mkdirSync(filepath)
             return undefined
+        }
+    }
+
+    deleteDB(dbname) {
+        let filepath = __dirname + "/../db/" + dbname
+
+        if (fs.existsSync(filepath)) {
+            fs.rmSync(filepath, { recursive: true })
+            return undefined
+        } else {
+            return { type: "error", message: "Database '" + dbname + "' doesn't exist." }
+        }
+    }
+
+    deleteCollection(dbname, cname) {
+        let filepath = __dirname + "/../db/" + dbname
+        
+        if (fs.existsSync(filepath)) {
+            if (fs.existsSync(filepath + "/" + cname + "/")) {
+
+                fs.rmSync(filepath + "/" + cname + "/", { recursive: true })
+                return undefined
+            } else {
+                return { type: "error", message: "Collection '" + cname + "' doesn't exist." }
+            }
+        } else {
+            return { type: "error", message: "Database '" + dbname + "' doesn't exist." }
         }
     }
 
