@@ -17,7 +17,7 @@ function message(response) {
     return "\u001b[34m" + "myscl: " + "\u001b[0m" + response
 }
 
-app.post("/db", (req, res) => {
+app.post("/db", async (req, res) => {
     if (req.body.type === "writeCache") {
         cache.setCache(req.body.key, req.body.value)
         res.json({ type: "success", key: req.body.key, value: req.body.value })
@@ -51,6 +51,8 @@ app.post("/db", (req, res) => {
         } else {
             res.json({ type: "error", message: "Datatype of value isn't an array. (Expected an array as input)" })
         }
+    } else if (req.body.type === "findOne") {
+        res.json(db.findOne(req.body.dbname, req.body.cname, req.body.search))
     } else {
         res.json({ type: "error", message: "Unknown request type." })
     }

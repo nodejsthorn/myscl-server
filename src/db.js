@@ -84,6 +84,39 @@ class Database {
             return { type: "error", message: "Database '" + dbname + "' doesn't exist." }
         } 
     }
+
+    findOne(dbname, cname, search) {
+        let filepath = __dirname + "/../db/" + dbname
+        let result
+
+        if (fs.existsSync(filepath)) {
+            if (!fs.existsSync(filepath + "/" + cname)) {
+                return { type: "error", message: "Collection '" + cname + "' doesn't exist." }
+            } else {
+                filepath = filepath + "/" + cname + "/" + cname + ".json"
+
+                if (fs.existsSync(filepath)) {
+                    let file = JSON.parse(fs.readFileSync(filepath, { encoding: "utf8" }))
+
+                    function find(arr, search) {
+                        return arr.find(item => 
+                            Object.keys(search).every(key => item[key] === search[key])
+                        )
+                    }
+
+                    result = find(file, search)
+                } else {
+                    return { type: "error", message: "Collection document file '" + cname + "' doesn't exist. (THIS IS MOST LIKELY A SERVER ISSUE)" }
+                }
+            }
+        } else {
+            return { type: "error", message: "Database '" + dbname + "' doesn't exist." }
+        }
+        
+        if (result) {
+            return result
+        }
+    }
 }
 
 module.exports = { Database }
