@@ -32,7 +32,7 @@ obviously. (Why are you using Unix for development)
 ### Installing Server
 
 Installing the MySCL Database Server is quite simple using the npm package 'myscl-server'. To install the
-mysql-server package and use it, run the following command listed below.
+myscl-server package and use it, run the following command listed below.
 
 ```
 sudo npm i myscl-server -g

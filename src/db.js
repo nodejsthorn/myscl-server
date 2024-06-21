@@ -144,6 +144,63 @@ class Database {
             return result
         }
     }
+
+    findMany(dbname, cname, search) {
+        let filepath = __dirname + "/../db/" + dbname
+        let result
+
+        if (fs.existsSync(filepath)) {
+            if (!fs.existsSync(filepath + "/" + cname)) {
+                return { type: "error", message: "Collection '" + cname + "' doesn't exist." }
+            } else {
+                filepath = filepath + "/" + cname + "/" + cname + ".json"
+
+                if (fs.existsSync(filepath)) {
+                    let file = JSON.parse(fs.readFileSync(filepath, { encoding: "utf8" }))
+
+                    function find(array, searchObject) {
+                        return array.filter(obj => {
+                            return Object.keys(searchObject).every(key => 
+                                obj.hasOwnProperty(key) && obj[key] === searchObject[key]
+                            )
+                        })
+                    }
+
+                    result = find(file, search)
+                } else {
+                    return { type: "error", message: "Collection document file '" + cname + "' doesn't exist. (THIS IS MOST LIKELY A SERVER ISSUE)" }
+                }
+            }
+        } else {
+            return { type: "error", message: "Database '" + dbname + "' doesn't exist." }
+        }
+        
+        if (result) {
+            return result
+        }
+    }
+
+    readAllCollections(dbname) {
+        let filepath = __dirname + "/../db/" + dbname
+
+        if (fs.existsSync(filepath)) {
+            const files = fs.readdirSync(filepath)
+            const collections = files.filter(file => fs.statSync(file).isDirectory())
+
+            return collections
+        } else {
+            return { type: "error", message: "Database '" + dbname + "' doesn't exist." }
+        }
+    }
+
+    readAllDatabases() {
+        let filepath = __dirname + "/../db/"
+
+        const files = fs.readdirSync(filepath)
+        const databases = files.filter(file => fs.statSync(file).isDirectory())
+
+        return databases
+    }
 }
 
 module.exports = { Database }
